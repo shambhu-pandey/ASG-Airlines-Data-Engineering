@@ -1,0 +1,31 @@
+model Model
+	culture: en-IN
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["booking_payment_summary","dim_flights","dim_passengers","fact_bookings"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table booking_payment_summary
+ref table dim_flights
+ref table DateTableTemplate_64316582-4191-4f2a-9e8a-0492e01f5de3
+ref table LocalDateTable_84064b39-34a1-4062-b000-8db3fc394630
+ref table LocalDateTable_62b462ef-8c80-444a-80e3-566be2c156c7
+ref table LocalDateTable_9c023627-677c-4b9e-a6ba-bf38a0ab5547
+ref table dim_passengers
+ref table LocalDateTable_d9cc67b2-e67a-48b8-bbaa-7009ef6459c1
+ref table fact_bookings
+ref table LocalDateTable_f1e42112-5ebd-4912-870d-6035b0dfd61b
+ref table LocalDateTable_310d24ca-08bc-48fd-9c9c-c90d1630fe32
+ref table LocalDateTable_4db820cb-2565-436f-885a-eb5d15a19952
+ref table LocalDateTable_224c24a7-9e1e-4d26-a09b-a41c9ce4eab6
+
+ref cultureInfo en-IN
+

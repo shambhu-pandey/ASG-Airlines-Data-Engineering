@@ -1,0 +1,125 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "f2a4c7d9e1b3486fa205",
+  "position": {
+    "x": 40,
+    "y": 870,
+    "z": 16,
+    "height": 170,
+    "width": 1840,
+    "tabOrder": 16
+  },
+  "visual": {
+    "visualType": "textbox",
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Delay / Anomaly Insights'"
+                }
+              }
+            },
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "'12D'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Duration Anomaly Analysis"
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "• Average flight duration: 164.42 minutes"
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "• Duration anomaly range: 9.75–319.08 minutes"
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "• Duration anomalies detected: 0"
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "• Anomaly rate: 0%"
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Data Quality"
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "• 964 validated flights are included in the reporting layer."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "• Invalid flight records were isolated through the ETL quarantine process."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

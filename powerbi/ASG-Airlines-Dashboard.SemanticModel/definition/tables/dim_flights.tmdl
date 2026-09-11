@@ -1,0 +1,109 @@
+table dim_flights
+	lineageTag: 271ceb8d-6c17-4e9a-a160-bc6a35d81784
+
+	column flight_id
+		dataType: string
+		lineageTag: 43fcb837-4f4a-4eb0-aa7c-a145706381cb
+		summarizeBy: none
+		sourceColumn: flight_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column airline
+		dataType: string
+		lineageTag: f322862e-5698-4bb9-9dcc-94af783ff1bb
+		summarizeBy: none
+		sourceColumn: airline
+
+		annotation SummarizationSetBy = Automatic
+
+	column source
+		dataType: string
+		lineageTag: 57f69a41-1a57-4bc2-b76c-1fdf00e0ccb9
+		summarizeBy: none
+		sourceColumn: source
+
+		annotation SummarizationSetBy = Automatic
+
+	column destination
+		dataType: string
+		lineageTag: cc669609-bf80-4b46-9dc2-75c18dc0981c
+		summarizeBy: none
+		sourceColumn: destination
+
+		annotation SummarizationSetBy = Automatic
+
+	column departure_time
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 70bc580a-14da-46b9-906a-61dff387c9e9
+		summarizeBy: none
+		sourceColumn: departure_time
+
+		variation Variation
+			isDefault
+			relationship: 6cfc16b7-6fd9-4e1f-901d-79df283bd429
+			defaultHierarchy: LocalDateTable_84064b39-34a1-4062-b000-8db3fc394630.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column arrival_time
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: ee599889-1734-4ac4-a5a7-8f487e706533
+		summarizeBy: none
+		sourceColumn: arrival_time
+
+		variation Variation
+			isDefault
+			relationship: 7e566acf-5e88-4855-bd12-2f8d89cb33f9
+			defaultHierarchy: LocalDateTable_62b462ef-8c80-444a-80e3-566be2c156c7.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column duration_minutes
+		dataType: double
+		lineageTag: 57180484-60f0-4264-be05-98feec457e07
+		summarizeBy: sum
+		sourceColumn: duration_minutes
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column flight_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: eb51cdef-f281-4f1a-821f-6382897e5ea4
+		summarizeBy: none
+		sourceColumn: flight_date
+
+		variation Variation
+			isDefault
+			relationship: 9668ea9c-b167-49ea-ae72-05431a507900
+			defaultHierarchy: LocalDateTable_9c023627-677c-4b9e-a6ba-bf38a0ab5547.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column route
+		dataType: string
+		lineageTag: 9f73c0c0-8ccc-450e-a471-66e386f59452
+		summarizeBy: none
+		sourceColumn: route
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_flights = m
+		mode: import
+		source =
+				let
+				    Source = Odbc.DataSource("dsn=ASG-Airlines-Azure", [HierarchicalNavigation=true]),
+				    asg_airlines_Database = Source{[Name="asg_airlines",Kind="Database"]}[Data],
+				    dim_flights_Table = asg_airlines_Database{[Name="dim_flights",Kind="Table"]}[Data]
+				in
+				    dim_flights_Table
+
+	annotation PBI_ResultType = Table
+

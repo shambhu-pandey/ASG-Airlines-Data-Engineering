@@ -1,0 +1,114 @@
+table booking_payment_summary
+	lineageTag: ad575464-a745-4d3f-870f-2712b5b392ff
+
+	measure 'Total Bookings' =
+			
+			DISTINCTCOUNT(fact_bookings[booking_id])
+		formatString: 0
+		lineageTag: c91657ed-fe11-4b5a-895e-cb904e86abba
+
+	measure Measure
+		lineageTag: 815993b1-3206-460e-b273-e241a955e0b1
+
+		annotation 43dbc3e8-3a1c-4b6f-9923-b49ff7d6691c = True
+
+	measure 'Total Passengers' =
+			
+			DISTINCTCOUNT(dim_passengers[passenger_id])
+		formatString: 0
+		lineageTag: 9264a5e8-472e-4484-a751-a600ccd72a46
+
+	measure 'Total Revenue' =
+			
+			SUM(booking_payment_summary[total_payment_amount])
+		lineageTag: 48b02219-3971-4dba-a609-7c9f70f37e00
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Flights' =
+			
+			DISTINCTCOUNT(dim_flights[flight_id])
+		formatString: 0
+		lineageTag: 550c1271-e626-4e33-b17e-ad256730983b
+
+	measure 'Average Booking Value' =
+			
+			DIVIDE(
+			    [Total Revenue],
+			    [Total Bookings],
+			    0
+			)
+		lineageTag: 3113f62f-a3de-44e0-8e83-6bb9fe1b4108
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Measure 2'
+		lineageTag: 98cf88b8-73a6-4546-98d2-15a53afd819b
+
+		annotation 43dbc3e8-3a1c-4b6f-9923-b49ff7d6691c = True
+
+	measure 'Revenue per Passenger' =
+			
+			DIVIDE(
+			    [Total Revenue],
+			    [Total Passengers],
+			    0
+			)
+		formatString: 0
+		lineageTag: 08612e93-79cb-47c0-859e-ce6f18d311ff
+
+	column booking_id
+		dataType: string
+		lineageTag: d0017004-7d80-4c23-8cfc-3e67ec711ac8
+		summarizeBy: none
+		sourceColumn: booking_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_count
+		dataType: int64
+		formatString: 0
+		lineageTag: cb329bbe-d6f1-4177-a06f-cd025319b673
+		summarizeBy: sum
+		sourceColumn: payment_count
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_payment_amount
+		dataType: double
+		lineageTag: be49ca56-ef75-4e3b-9af2-ebf393b1e059
+		summarizeBy: sum
+		sourceColumn: total_payment_amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column payment_method_summary
+		dataType: string
+		lineageTag: e367d088-9d60-4c07-aa50-68a0d954543f
+		summarizeBy: none
+		sourceColumn: payment_method_summary
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_category
+		dataType: string
+		lineageTag: db66375b-7fd9-4b12-9e89-1d9a216a52ac
+		summarizeBy: none
+		sourceColumn: payment_category
+
+		annotation SummarizationSetBy = Automatic
+
+	partition booking_payment_summary = m
+		mode: import
+		source =
+				let
+				    Source = Odbc.DataSource("dsn=ASG-Airlines-Azure", [HierarchicalNavigation=true]),
+				    asg_airlines_Database = Source{[Name="asg_airlines",Kind="Database"]}[Data],
+				    booking_payment_summary_Table = asg_airlines_Database{[Name="booking_payment_summary",Kind="Table"]}[Data]
+				in
+				    booking_payment_summary_Table
+
+	annotation PBI_ResultType = Table
+

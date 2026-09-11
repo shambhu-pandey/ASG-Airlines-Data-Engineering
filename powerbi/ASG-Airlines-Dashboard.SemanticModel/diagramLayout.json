@@ -1,0 +1,74 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 512.44008973438247,
+            "y": -50
+          },
+          "nodeIndex": "booking_payment_summary",
+          "nodeLineageTag": "ad575464-a745-4d3f-870f-2712b5b392ff",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 489.76489234084784,
+            "y": 550.36451422764208
+          },
+          "nodeIndex": "dim_flights",
+          "nodeLineageTag": "271ceb8d-6c17-4e9a-a160-bc6a35d81784",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 228.10238162992391,
+            "y": 80.802260646922946
+          },
+          "nodeIndex": "dim_passengers",
+          "nodeLineageTag": "96c90ddb-64f5-42bc-944b-a16b24a5ba2b",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": 333.64867688203117
+          },
+          "nodeIndex": "fact_bookings",
+          "nodeLineageTag": "821129cd-4526-490a-bdd6-be1020f83a86",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 56.447393005377968,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

@@ -1,0 +1,64 @@
+table dim_passengers
+	lineageTag: 96c90ddb-64f5-42bc-944b-a16b24a5ba2b
+
+	column passenger_id
+		dataType: string
+		lineageTag: bef83044-8cb8-4349-b09d-0ab60d00b2bb
+		summarizeBy: none
+		sourceColumn: passenger_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column age
+		dataType: int64
+		formatString: 0
+		lineageTag: 3dd0bfa5-414b-48e4-8fba-3273db9c2ead
+		summarizeBy: sum
+		sourceColumn: age
+
+		annotation SummarizationSetBy = Automatic
+
+	column age_group
+		dataType: string
+		lineageTag: a7f1059c-d82a-4212-87fb-ded6672b60db
+		summarizeBy: none
+		sourceColumn: age_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column gender
+		dataType: string
+		lineageTag: ee96b3f6-e097-4da9-8c94-fcee5d5abd7f
+		summarizeBy: none
+		sourceColumn: gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column date_of_birth
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 976647ee-3949-41c9-9f58-ed8fdc524d8e
+		summarizeBy: none
+		sourceColumn: date_of_birth
+
+		variation Variation
+			isDefault
+			relationship: bfba12e5-9821-4ea4-96ff-024ffe5d8fd5
+			defaultHierarchy: LocalDateTable_d9cc67b2-e67a-48b8-bbaa-7009ef6459c1.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition dim_passengers = m
+		mode: import
+		source =
+				let
+				    Source = Odbc.DataSource("dsn=ASG-Airlines-Azure", [HierarchicalNavigation=true]),
+				    asg_airlines_Database = Source{[Name="asg_airlines",Kind="Database"]}[Data],
+				    dim_passengers_Table = asg_airlines_Database{[Name="dim_passengers",Kind="Table"]}[Data]
+				in
+				    dim_passengers_Table
+
+	annotation PBI_ResultType = Table
+

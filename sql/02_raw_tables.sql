@@ -1,0 +1,90 @@
+USE asg_airlines;
+
+CREATE TABLE IF NOT EXISTS raw_flights (
+    raw_flight_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    run_id VARCHAR(64) NOT NULL,
+    batch_id VARCHAR(64) NOT NULL,
+    source_file VARCHAR(512) NOT NULL,
+    source_row_num BIGINT UNSIGNED NOT NULL,
+    ingestion_timestamp DATETIME(6) NOT NULL,
+    record_hash CHAR(64) NULL,
+    flight_id TEXT NULL,
+    airline TEXT NULL,
+    source TEXT NULL,
+    destination TEXT NULL,
+    departure_time TEXT NULL,
+    arrival_time TEXT NULL,
+    duration TEXT NULL,
+    raw_payload JSON NULL,
+    PRIMARY KEY (raw_flight_id),
+    KEY idx_raw_flights_batch (batch_id),
+    KEY idx_raw_flights_source_row (source_file, source_row_num),
+    KEY idx_raw_flights_record_hash (record_hash)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS raw_bookings (
+    raw_booking_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    run_id VARCHAR(64) NOT NULL,
+    batch_id VARCHAR(64) NOT NULL,
+    source_file VARCHAR(512) NOT NULL,
+    source_row_num BIGINT UNSIGNED NOT NULL,
+    ingestion_timestamp DATETIME(6) NOT NULL,
+    record_hash CHAR(64) NULL,
+    booking_id TEXT NULL,
+    passenger_id TEXT NULL,
+    flight_id TEXT NULL,
+    booking_date TEXT NULL,
+    status TEXT NULL,
+    passport_number TEXT NULL,
+    seat_number TEXT NULL,
+    emergency_contact_name TEXT NULL,
+    emergency_contact_phone TEXT NULL,
+    raw_payload JSON NULL,
+    PRIMARY KEY (raw_booking_id),
+    KEY idx_raw_bookings_batch (batch_id),
+    KEY idx_raw_bookings_source_row (source_file, source_row_num),
+    KEY idx_raw_bookings_record_hash (record_hash)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS raw_passengers (
+    raw_passenger_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    run_id VARCHAR(64) NOT NULL,
+    batch_id VARCHAR(64) NOT NULL,
+    source_file VARCHAR(512) NOT NULL,
+    source_row_num BIGINT UNSIGNED NOT NULL,
+    ingestion_timestamp DATETIME(6) NOT NULL,
+    record_hash CHAR(64) NULL,
+    passenger_id TEXT NULL,
+    first_name TEXT NULL,
+    last_name TEXT NULL,
+    age TEXT NULL,
+    gender TEXT NULL,
+    email TEXT NULL,
+    phone TEXT NULL,
+    aadhaar_id TEXT NULL,
+    date_of_birth TEXT NULL,
+    raw_payload JSON NULL,
+    PRIMARY KEY (raw_passenger_id),
+    KEY idx_raw_passengers_batch (batch_id),
+    KEY idx_raw_passengers_source_row (source_file, source_row_num),
+    KEY idx_raw_passengers_record_hash (record_hash)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS raw_payments (
+    raw_payment_row_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    run_id VARCHAR(64) NOT NULL,
+    batch_id VARCHAR(64) NOT NULL,
+    source_file VARCHAR(512) NOT NULL,
+    source_row_num BIGINT UNSIGNED NOT NULL,
+    ingestion_timestamp DATETIME(6) NOT NULL,
+    record_hash CHAR(64) NULL,
+    payment_id TEXT NULL,
+    booking_id TEXT NULL,
+    amount TEXT NULL,
+    payment_method TEXT NULL,
+    raw_payload JSON NULL,
+    PRIMARY KEY (raw_payment_row_id),
+    KEY idx_raw_payments_batch (batch_id),
+    KEY idx_raw_payments_source_row (source_file, source_row_num),
+    KEY idx_raw_payments_record_hash (record_hash)
+) ENGINE = InnoDB;

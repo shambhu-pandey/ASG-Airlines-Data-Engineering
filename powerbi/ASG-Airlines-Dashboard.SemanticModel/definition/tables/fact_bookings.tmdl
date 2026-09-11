@@ -1,0 +1,243 @@
+table fact_bookings
+	lineageTag: 821129cd-4526-490a-bdd6-be1020f83a86
+
+	column booking_id
+		dataType: string
+		lineageTag: 7efca03c-bc06-4506-b7b8-b9e5466d20af
+		summarizeBy: none
+		sourceColumn: booking_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column passenger_id
+		dataType: string
+		lineageTag: 5e63a4ab-7564-4136-a63b-eef4595a0325
+		summarizeBy: none
+		sourceColumn: passenger_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column flight_id
+		dataType: string
+		lineageTag: eb2ca308-2b39-431b-9f2a-259059219499
+		summarizeBy: none
+		sourceColumn: flight_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column airline
+		dataType: string
+		lineageTag: f8c3c8bc-8ff9-497d-95d2-c6c5f1a457e2
+		summarizeBy: none
+		sourceColumn: airline
+
+		annotation SummarizationSetBy = Automatic
+
+	column source
+		dataType: string
+		lineageTag: c44b5d6e-ed9b-4acb-8479-ee9395744e7a
+		summarizeBy: none
+		sourceColumn: source
+
+		annotation SummarizationSetBy = Automatic
+
+	column destination
+		dataType: string
+		lineageTag: af2e7ddd-dda7-48b0-8297-6a98495eb05c
+		summarizeBy: none
+		sourceColumn: destination
+
+		annotation SummarizationSetBy = Automatic
+
+	column booking_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2d7b48a5-c24b-406c-92a6-5459b7788834
+		summarizeBy: none
+		sourceColumn: booking_date
+
+		variation Variation
+			isDefault
+			relationship: b4805745-173a-4b71-b473-1979f34b7af0
+			defaultHierarchy: LocalDateTable_f1e42112-5ebd-4912-870d-6035b0dfd61b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column booking_year
+		dataType: int64
+		formatString: 0
+		lineageTag: e90d4271-5e68-4161-88cf-39764cfd6424
+		summarizeBy: sum
+		sourceColumn: booking_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column booking_month
+		dataType: int64
+		formatString: 0
+		lineageTag: 5f3635b0-e59a-471e-ba04-1a9fc674409a
+		summarizeBy: sum
+		sourceColumn: booking_month
+
+		annotation SummarizationSetBy = Automatic
+
+	column booking_month_name
+		dataType: string
+		lineageTag: b384468d-6a22-40bc-b913-12d640c8e0ed
+		summarizeBy: none
+		sourceColumn: booking_month_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column booking_day
+		dataType: int64
+		formatString: 0
+		lineageTag: 703ff7f3-4f32-4f0d-94cc-6f090c137668
+		summarizeBy: sum
+		sourceColumn: booking_day
+
+		annotation SummarizationSetBy = Automatic
+
+	column status
+		dataType: string
+		lineageTag: 22d2ca86-60af-4967-b7f2-40ff1fcb6a5f
+		summarizeBy: none
+		sourceColumn: status
+
+		annotation SummarizationSetBy = Automatic
+
+	column seat_number
+		dataType: string
+		lineageTag: 1b4e678d-5f7a-4cb3-b8b3-66fcd3f03b84
+		summarizeBy: none
+		sourceColumn: seat_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column departure_time
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 67dd581a-11a6-4449-b1df-5672c27cd1ac
+		summarizeBy: none
+		sourceColumn: departure_time
+
+		variation Variation
+			isDefault
+			relationship: 4721384b-2e43-4e8f-9f81-57c06a970c32
+			defaultHierarchy: LocalDateTable_310d24ca-08bc-48fd-9c9c-c90d1630fe32.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column arrival_time
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 5d8d9037-94d2-45fb-9a6b-d2337d318801
+		summarizeBy: none
+		sourceColumn: arrival_time
+
+		variation Variation
+			isDefault
+			relationship: b068ebe8-99f8-4e2e-a02f-852f32eb9183
+			defaultHierarchy: LocalDateTable_4db820cb-2565-436f-885a-eb5d15a19952.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column duration_minutes
+		dataType: double
+		lineageTag: 625449a6-98b4-4178-ae52-f2b877054199
+		summarizeBy: sum
+		sourceColumn: duration_minutes
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column flight_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 9a92faf4-d4a4-4e58-8d1b-d4bda9c07cad
+		summarizeBy: none
+		sourceColumn: flight_date
+
+		variation Variation
+			isDefault
+			relationship: 2a0fc722-0e98-4db8-8fc3-5ea1817dbd94
+			defaultHierarchy: LocalDateTable_224c24a7-9e1e-4d26-a09b-a41c9ce4eab6.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column route
+		dataType: string
+		lineageTag: c3a917f6-b0e8-43bf-bfd0-7cc4855bf083
+		summarizeBy: none
+		sourceColumn: route
+
+		annotation SummarizationSetBy = Automatic
+
+	column passenger_age_group
+		dataType: string
+		lineageTag: d398d793-bab6-40b7-a72c-8d4a2a24aa36
+		summarizeBy: none
+		sourceColumn: passenger_age_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_count
+		dataType: int64
+		formatString: 0
+		lineageTag: 3a9c3972-3afe-46cc-afc0-08eb94689201
+		summarizeBy: sum
+		sourceColumn: payment_count
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_payment_amount
+		dataType: double
+		lineageTag: afecee22-2442-4fea-9ad5-1cb24a868d29
+		summarizeBy: sum
+		sourceColumn: total_payment_amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column payment_method_summary
+		dataType: string
+		lineageTag: 9f33749b-ea22-48c3-9d12-f3c516038632
+		summarizeBy: none
+		sourceColumn: payment_method_summary
+
+		annotation SummarizationSetBy = Automatic
+
+	column payment_category
+		dataType: string
+		lineageTag: 9f6275d6-0662-4550-b9c7-5a994b3cf587
+		summarizeBy: none
+		sourceColumn: payment_category
+
+		annotation SummarizationSetBy = Automatic
+
+	column flight_match_status
+		dataType: string
+		lineageTag: 74490af6-bbec-470c-87ed-1ac2ce6769fa
+		summarizeBy: none
+		sourceColumn: flight_match_status
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_bookings = m
+		mode: import
+		source =
+				let
+				    Source = Odbc.DataSource("dsn=ASG-Airlines-Azure", [HierarchicalNavigation=true]),
+				    asg_airlines_Database = Source{[Name="asg_airlines",Kind="Database"]}[Data],
+				    fact_bookings_Table = asg_airlines_Database{[Name="fact_bookings",Kind="Table"]}[Data]
+				in
+				    fact_bookings_Table
+
+	annotation PBI_ResultType = Table
+

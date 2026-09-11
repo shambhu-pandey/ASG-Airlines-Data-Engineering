@@ -1,0 +1,54 @@
+relationship 6cfc16b7-6fd9-4e1f-901d-79df283bd429
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dim_flights.departure_time
+	toColumn: LocalDateTable_84064b39-34a1-4062-b000-8db3fc394630.Date
+
+relationship 7e566acf-5e88-4855-bd12-2f8d89cb33f9
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dim_flights.arrival_time
+	toColumn: LocalDateTable_62b462ef-8c80-444a-80e3-566be2c156c7.Date
+
+relationship 9668ea9c-b167-49ea-ae72-05431a507900
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dim_flights.flight_date
+	toColumn: LocalDateTable_9c023627-677c-4b9e-a6ba-bf38a0ab5547.Date
+
+relationship bfba12e5-9821-4ea4-96ff-024ffe5d8fd5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dim_passengers.date_of_birth
+	toColumn: LocalDateTable_d9cc67b2-e67a-48b8-bbaa-7009ef6459c1.Date
+
+relationship b4805745-173a-4b71-b473-1979f34b7af0
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_bookings.booking_date
+	toColumn: LocalDateTable_f1e42112-5ebd-4912-870d-6035b0dfd61b.Date
+
+relationship 4721384b-2e43-4e8f-9f81-57c06a970c32
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_bookings.departure_time
+	toColumn: LocalDateTable_310d24ca-08bc-48fd-9c9c-c90d1630fe32.Date
+
+relationship b068ebe8-99f8-4e2e-a02f-852f32eb9183
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_bookings.arrival_time
+	toColumn: LocalDateTable_4db820cb-2565-436f-885a-eb5d15a19952.Date
+
+relationship 2a0fc722-0e98-4db8-8fc3-5ea1817dbd94
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_bookings.flight_date
+	toColumn: LocalDateTable_224c24a7-9e1e-4d26-a09b-a41c9ce4eab6.Date
+
+relationship AutoDetected_744c6b1a-1ffe-4d52-9c2f-78fbbe918e29
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: fact_bookings.booking_id
+	toColumn: booking_payment_summary.booking_id
+
+relationship AutoDetected_0aa6562a-92a7-441a-971c-80796de3dadd
+	fromColumn: fact_bookings.flight_id
+	toColumn: dim_flights.flight_id
+
+relationship AutoDetected_9f893b46-f2cd-4c07-85a8-353b248754b4
+	fromColumn: fact_bookings.passenger_id
+	toColumn: dim_passengers.passenger_id
+
