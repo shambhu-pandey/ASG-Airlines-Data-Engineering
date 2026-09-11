@@ -366,15 +366,8 @@ These are future improvements, not current implementation claims.
 - Unmatched records are retained for traceability.
 - The current solution is designed for assessment-scale data.
 
-## 24. Limitations
 
-- Scheduled-versus-actual timestamps are unavailable.
-- Real operational delay cannot be calculated.
-- Some reference mappings are unavailable.
-- The current solution is tested at assessment scale.
-- Power BI refresh is manual.
-
-## 25. Project Structure
+## 24. Project Structure
 
 ```text
 ASG-Airlines-Data-Engineering/
