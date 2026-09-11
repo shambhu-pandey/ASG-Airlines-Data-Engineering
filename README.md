@@ -1,4 +1,287 @@
-# ASG Airlines Data Engineering
+# ✈️ ASG Airlines Data Engineering
+
+### NeoStats Data Engineering Assessment
+
+This project is an end-to-end data engineering pipeline built for the ASG Airlines assessment. It takes airline data from an Excel workbook, cleans and validates it, stores it in MySQL, creates reporting-ready Gold tables, synchronizes the data to Azure MySQL, and visualizes the results using Power BI.
+
+**Python | MySQL | Azure MySQL | Power BI | Pytest**
+
+## Project Overview
+
+The source workbook contains flights, bookings, passengers, and payments. The pipeline preserves the original data, checks its quality, safely cleans usable records, quarantines unsafe records, and prepares Gold tables for reporting.
+
+```text
+Excel -> Python ingestion -> RAW -> Cleaning & Validation -> CLEAN
+	-> Gold -> Azure MySQL -> Power BI
+```
+
+## Project Features
+
+- Excel data ingestion
+- Batch processing
+- Data cleaning and validation
+- Duplicate and conflict handling
+- Audit logging and quarantine of unsafe records
+- Overnight flight duration handling
+- Payment aggregation
+- Gold reporting tables
+- Azure MySQL synchronization
+- Power BI dashboard
+- Automated tests
+- Windows Task Scheduler automation
+- Idempotent processing
+
+## Source Dataset
+
+The source workbook is `data/raw/UseCase - Airlines.xlsx`.
+
+| Sheet | Purpose |
+|---|---|
+| flights | Flight information |
+| bookings | Booking information |
+| passengers | Passenger information |
+| payments | Payment information |
+
+Important flight fields include `flight_id`, `airline`, `source`, `destination`, `departure_time`, `arrival_time`, and duration. The original passenger sheet contains sensitive personal information, but direct passenger identifiers are not exposed in the Gold reporting layer.
+
+## How the Pipeline Works
+
+### Step 1 — Ingestion
+
+Python reads the Excel workbook and loads the data into RAW MySQL tables in batches.
+
+### Step 2 — Profiling
+
+The pipeline checks missing values, duplicates, malformed IDs, timestamps, payment values, and other quality issues.
+
+### Step 3 — Cleaning
+
+Safe records are cleaned and moved into CLEAN tables.
+
+### Step 4 — Validation
+
+Keys, relationships, timestamps, payments, and traceability are checked.
+
+### Step 5 — Audit & Quarantine
+
+Corrections are recorded in `audit_log`. Unsafe records are moved to `quarantine_records`.
+
+### Step 6 — Gold Layer
+
+Clean data is transformed into reporting-friendly tables.
+
+### Step 7 — Azure Sync
+
+Validated data is synchronized to Azure MySQL using bounded, key-based, idempotent synchronization.
+
+### Step 8 — Power BI
+
+Power BI reads the Gold tables and displays the business insights.
+
+## Architecture
+
+![Architecture Diagram](docs/images/architecture_diagram.png)
+
+The local pipeline moves data through RAW, CLEAN, governance, and Gold layers. Azure MySQL is the synchronized cloud target, and Power BI reads Gold data.
+
+## Data Flow
+
+![Data Flow Diagram](docs/images/data_flow_diagram.png)
+
+Excel data is ingested into RAW, checked and cleaned, then separated into safe CLEAN records and governance records. Gold transformation creates reporting tables for Azure synchronization and Power BI.
+
+## Data Model
+
+![Data Model](docs/images/data_model_diagram.png)
+
+- `dim_flights`: flight reporting data.
+- `dim_passengers`: passenger reporting data without direct identifiers.
+- `booking_payment_summary`: payment totals by booking.
+- `fact_bookings`: booking-level reporting fact.
+
+`fact_bookings` connects bookings with flight, passenger, and payment information.
+
+## Data Quality
+
+| Layer | Flights | Bookings | Passengers | Payments |
+|---|---:|---:|---:|---:|
+| RAW | 1,020 | 1,012 | 1,039 | 1,000 |
+| CLEAN | 964 | 1,000 | 1,000 | 1,000 |
+
+| Governance metric | Count |
+|---|---:|
+| `audit_log` | 78 |
+| `quarantine_records` | 107 |
+| `flight_id_collision` | 16 |
+| `invalid_flight_time` | 1 |
+| `missing_airline` | 39 |
+| `invalid_or_duplicate_passenger_id` | 39 |
+| `excluded_booking_record` | 12 |
+
+If a value cannot be safely determined, the pipeline does not guess it. The record is either kept with a safe NULL/UNKNOWN value or quarantined.
+
+## Flight Duration Logic
+
+For normal flights, duration is calculated as:
+
+```text
+arrival_time - departure_time
+```
+
+For overnight flights, the next-day arrival timestamp is respected so the duration remains positive. Invalid or over-12-hour flight records are quarantined.
+
+Verified values:
+
+- Average duration: 164.42 minutes
+- Population standard deviation: approximately 77.33 minutes
+- Anomaly range: approximately 9.75–319.08 minutes
+- Duration anomalies: 0
+- Anomaly rate: 0%
+
+The source file does not contain scheduled-versus-actual timestamps. Because of this, true flight delay minutes, delayed-flight count, and on-time percentage cannot be calculated. I have intentionally not created fake delay metrics.
+
+## Payment Logic
+
+- Zero-payment bookings: 363
+- Single-payment bookings: 370
+- Multiple-payment bookings: 267
+- Payment rows in multiple-payment groups: 630
+- Orphan payments: 0
+
+Multiple payments are valid and are aggregated by booking instead of being incorrectly removed as duplicates.
+
+Total payment/revenue: **7,982,087.99**
+
+## Gold Reporting Tables
+
+| Table | Purpose |
+|---|---|
+| `dim_flights` | Flight reporting |
+| `dim_passengers` | Passenger reporting without direct identifiers |
+| `booking_payment_summary` | Payment totals by booking |
+| `fact_bookings` | Booking-level reporting fact |
+
+Verified counts:
+
+- `dim_flights`: 964
+- `dim_passengers`: 1,000
+- `booking_payment_summary`: 1,000
+- `fact_bookings`: 1,000
+
+There are 42 unmatched booking-to-flight records. They are intentionally retained for traceability.
+
+## Power BI Dashboard
+
+### Executive Operations Dashboard
+
+![Executive Dashboard](docs/images/powerbi_executive_dashboard.png)
+
+- Total Bookings
+- Total Passengers
+- Total Revenue
+- Total Flights
+- Average Booking Value
+- Booking and revenue trends
+- Airline and route analysis
+- Booking status
+- Payment category
+- Passenger age groups
+- Interactive slicers
+
+### Flight Operations Analysis
+
+![Flight Operations](docs/images/powerbi_flight_operations.png)
+
+- Average Flight Duration
+- Total Flights
+- Validated Flights
+- Flights by Airline
+- Average Duration by Airline
+- Route-wise traffic
+- Source/destination analysis
+- Operational slicers
+- Duration and anomaly insights
+
+Power BI uses Gold tables only: `dim_flights`, `dim_passengers`, `booking_payment_summary`, and `fact_bookings`.
+
+## Azure
+
+Azure Database for MySQL Flexible Server is deployed for the validated project data.
+
+- Resource Group: `rg-neostats-airlines`
+- Database: `asg_airlines`
+- Region: South India
+
+The local validated data is synchronized to Azure using `scripts/sync_local_to_azure.py`.
+
+- Bounded batches
+- Key-based upserts
+- Transactions
+- Identity checks
+- Schema checks
+- Local/Azure reconciliation
+- Deterministic governance event keys
+
+No passwords, host credentials, or secrets are stored in this README.
+
+## Automation
+
+The main pipeline is `scripts/run_pipeline.py`.
+
+Stages:
+
+1. Source detection
+2. Ingestion
+3. Profiling
+4. Cleaning
+5. Validation
+6. Gold transformation
+7. Azure synchronization
+
+Windows Task Scheduler is configured to run every 30 minutes. The scheduler trigger was tested separately, and a full seven-stage pipeline execution was successfully logged. When the source Excel file has not changed, SHA-256 detection skips unnecessary reprocessing. Power BI Desktop refresh remains manual.
+
+## Testing
+
+### Test Result
+
+**20 tests passed**
+
+The tests cover data reconciliation, Gold uniqueness, payment preservation, quarantine traceability, idempotency, Azure synchronization, PBIR/model validation, and visual validation.
+
+## Security / PII
+
+The source contains passenger personal information. The reporting layer removes direct identifiers such as:
+
+- Names
+- Passport numbers
+- Aadhaar IDs
+- Email
+- Phone
+- Emergency-contact information
+
+Power BI uses Gold data only. Credentials are stored outside Git using runtime configuration. This project does not claim that every possible form of personal data is removed from every processing layer.
+
+## Repository Structure
+
+```text
+ASG-Airlines-Data-Engineering/
+├── data/
+│   ├── raw/
+│   └── cleaned/
+├── docs/
+│   ├── images/
+│   ├── validation_report.md
+│   └── transformation_report.md
+├── powerbi/
+├── scripts/
+├── sql/
+├── src/
+├── tests/
+├── azure/
+├── requirements.txt
+├── .env.example
+└── README.md
+```
 
 An end-to-end data engineering assessment for turning airline operational data into validated, auditable, PII-aware reporting data for Power BI.
 
