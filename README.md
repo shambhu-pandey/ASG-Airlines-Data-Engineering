@@ -39,6 +39,10 @@ A key part of this project is the deployment of the validated reporting data to 
 | Region | South India |
 | MySQL Version | 8.4 |
 
+### Azure MySQL Deployment
+
+![Azure MySQL Deployment](docs/images/azure_mysql_overview.png)
+
 The cloud flow is:
 
 ```text
