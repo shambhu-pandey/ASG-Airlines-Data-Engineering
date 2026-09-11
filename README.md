@@ -4,6 +4,16 @@ An end-to-end data engineering assessment for turning airline operational data i
 
 The project was developed locally with Python and MySQL, validated against the assessment edge cases, and deployed to Azure Database for MySQL Flexible Server.
 
+## 📊 Power BI Dashboard
+
+### Executive Operations Dashboard
+
+![ASG Airlines Executive Operations Dashboard](docs/images/powerbi_executive_dashboard.png)
+
+### Flight Operations Analysis
+
+![ASG Airlines Flight Operations Analysis](docs/images/powerbi_flight_operations.png)
+
 ## 🚀 Implementation Highlights
 
 - End-to-end Python + MySQL data engineering pipeline
@@ -189,16 +199,6 @@ Azure Database for MySQL Flexible Server is deployed with the same validated arc
 ## Power BI
 
 The repository contains `powerbi/ASG-Airlines-Dashboard.pbip`, `powerbi/ASG-Airlines-Dashboard.pbix`, PBIR report definitions, and the TMDL semantic model.
-
-### Dashboard Preview
-
-#### Executive Operations Dashboard
-
-![ASG Airlines Executive Operations Dashboard](images/powerbi_executive_dashboard.png)
-
-#### Flight Operations Analysis
-
-![ASG Airlines Flight Operations Analysis](images/powerbi_flight_operations.png)
 
 The two report pages are:
 
