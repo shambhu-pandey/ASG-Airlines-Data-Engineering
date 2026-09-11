@@ -2,7 +2,7 @@
 
 An end-to-end data engineering assessment for turning airline operational data into validated, auditable, PII-aware reporting data for Power BI.
 
-The project was developed locally with Python and MySQL, validated against the assessment edge cases, and prepared for Azure Database for MySQL Flexible Server.
+The project was developed locally with Python and MySQL, validated against the assessment edge cases, and deployed to Azure Database for MySQL Flexible Server.
 
 ## Business Problem
 
@@ -19,7 +19,7 @@ The pipeline must preserve source data, make corrections explainable, isolate un
 - Protect passenger PII before reporting.
 - Build a Gold layer for analytics and Power BI.
 - Preserve batch traceability, replayability, and idempotent processing.
-- Prepare the solution for Azure migration and larger-scale processing.
+- Synchronize validated local data incrementally to Azure Database for MySQL.
 
 ## Architecture
 
@@ -140,7 +140,7 @@ fact_bookings
 - Booking Status distribution
 - Payment category distribution
 
-**True operational delay minutes cannot be calculated from the supplied source because scheduled and actual operational timestamps are not available. Duration-based anomaly detection is the planned enhancement.**
+**True operational delay minutes cannot be calculated from the supplied source because scheduled and actual operational timestamps are not available. The source provides departure, arrival, and duration values, so duration-based statistical anomaly analysis is implemented and validated. For 964 validated flights, the average duration is 164.42 minutes, the population standard deviation is approximately 77.33 minutes, the anomaly thresholds are approximately 9.75–319.08 minutes, and 0 duration anomalies were detected (0% anomaly rate).**
 
 ## Validation Summary
 
@@ -159,6 +159,8 @@ fact_bookings
 | Payments | orphan payments | 0 |
 | Payments | Gold payment total | 7,982,087.99 |
 | Relationships | unmatched booking-to-flight records | 42 |
+| Anomalies | duration anomalies / anomaly rate | 0 / 0% |
+| Anomalies | average duration / thresholds | 164.42 minutes / approximately 9.75–319.08 minutes |
 
 Gold keys are unique, quarantine traceability passed, payment preservation passed, and Gold processing is idempotent.
 
@@ -171,7 +173,7 @@ Gold keys are unique, quarantine traceability passed, payment preservation passe
 | Database | `asg_airlines` |
 | Region | South India |
 
-The local MySQL database was the validated source of truth. Azure Database for MySQL Flexible Server was prepared for the same architecture. Migration utilities perform preflight identity checks, target-table checks, bounded batches, and post-migration reconciliation. Azure credentials are runtime environment variables only.
+Azure Database for MySQL Flexible Server is deployed with the same validated architecture. Core tables and Gold tables were synchronized successfully, and local-versus-Azure row counts reconcile exactly for the synchronized tables. Incremental synchronization uses bounded batches, key-based upserts, deterministic logical keys for governance records, preflight identity/schema checks, and post-sync reconciliation. Normal scheduled runs use `scripts/sync_local_to_azure.py`; `migrate_local_to_azure.py` and `migrate_gold_to_azure.py` remain available for initial provisioning or recovery only. Azure credentials are runtime environment variables only.
 
 ## Power BI
 
@@ -179,10 +181,10 @@ The repository contains `powerbi/ASG-Airlines-Dashboard.pbip`, `powerbi/ASG-Airl
 
 The two report pages are:
 
-1. **ASG Airlines | Executive Operations Dashboard**: bookings, passengers, revenue, flights, booking trends, routes, status, payment categories, age groups, and slicers.
-2. **ASG Airlines | Flight Operations Analysis**: average duration, validated flights, airline distribution, duration by airline, route traffic, source/destination traffic, and operational slicers.
+1. **ASG Airlines | Executive Operations Dashboard**: Total Bookings, Total Passengers, Total Revenue, Total Flights, Average Booking Value, booking and revenue trends, airline distribution, route analysis, booking status, payment category, passenger age groups, and interactive slicers.
+2. **ASG Airlines | Flight Operations Analysis**: Average Flight Duration, Total Flights, Validated Flights, Flights by Airline, Average Duration by Airline, Route-wise Flight Traffic, Flight Duration by Airline, Flights by Source, Flights by Destination, operational slicers, and the Duration Anomaly Analysis / Data Quality insight section.
 
-Power BI uses Gold tables only and existing measures: `Total Bookings`, `Total Passengers`, `Total Flights`, `Total Revenue`, `Average Booking Value`, and `Revenue per Passenger`.
+Power BI consumes Gold tables only and does not expose direct passenger PII. Existing measures include `Total Bookings`, `Total Passengers`, `Total Flights`, `Total Revenue`, `Average Booking Value`, and `Revenue per Passenger`. Power BI Desktop refresh remains manual.
 
 ## Project Structure
 
@@ -244,7 +246,7 @@ Implemented local commands:
 
 ## Automated Pipeline Execution
 
-The local orchestrator runs the existing stages in order: source detection and hashing, ingestion, profiling, cleaning, validation, Gold transformation, Azure core migration, and Azure Gold migration. It stops on the first failed stage and records the source hash only after the complete selected run succeeds. Existing ingestion hash/idempotency checks remain the source-of-truth safeguards.
+The local orchestrator runs the existing stages in order: source detection and SHA-256 hashing, ingestion, profiling, cleaning, validation, Gold transformation, Azure core synchronization, and Azure Gold synchronization. It stops on the first failed stage and records the source hash only after the complete selected run succeeds. Existing ingestion hash/idempotency checks remain the source-of-truth safeguards.
 
 Each run writes a timestamped log under `logs/pipeline/`. The last successful source hash is stored in `data/state/last_successful_source.json`; an unchanged source exits successfully without reprocessing. Logs redact configured secret values and never print environment variables.
 
@@ -254,7 +256,7 @@ Run the default local-plus-Azure flow:
 .venv\Scripts\python.exe scripts\run_pipeline.py
 ```
 
-Run with an explicit source or skip Azure migration:
+Run with an explicit source or skip Azure synchronization:
 
 ```powershell
 .venv\Scripts\python.exe scripts\run_pipeline.py --file "data/raw/UseCase - Airlines.xlsx"
@@ -279,7 +281,7 @@ Install or remove a per-user Windows Task Scheduler task that runs the orchestra
 .\scripts\remove_pipeline_task.ps1
 ```
 
-Azure loading is automatic when the orchestrator runs without `--skip-azure`; it uses `scripts\sync_local_to_azure.py` for bounded, key-based upserts into the already-populated Azure database. `--preflight-azure` performs read-only schema and local-row checks before each sync. The original `migrate_local_to_azure.py` and `migrate_gold_to_azure.py` remain available for initial provisioning/recovery only and are not called by scheduled runs. Power BI Desktop refresh is not automated: after Gold data is loaded, open `powerbi\ASG-Airlines-Dashboard.pbip` and use **Refresh**, then verify the report. No brittle GUI automation or untested REST refresh is used.
+Azure synchronization is automatic when the orchestrator runs without `--skip-azure`; it uses `scripts\sync_local_to_azure.py` for bounded, key-based upserts into the Azure database. `--preflight-azure` performs read-only schema and local-row checks before synchronization. The original `migrate_local_to_azure.py` and `migrate_gold_to_azure.py` remain available for initial provisioning/recovery only and are not called by scheduled runs. Power BI Desktop refresh is not automated: after Gold data is loaded, open `powerbi\ASG-Airlines-Dashboard.pbip` and use **Refresh**, then verify the report. No brittle GUI automation or untested REST refresh is used.
 
 The pipeline architecture is:
 
@@ -299,7 +301,7 @@ RAW -> CLEAN -> Validation / Quarantine -> GOLD
 						 Power BI Desktop (manual refresh)
 ```
 
-Implemented automatically: source hash detection, all existing local stages, failure stopping, run logs, state tracking, optional Azure preflight, incremental Azure core/Gold synchronization, idempotent key-based upserts, and local-vs-Azure reconciliation. Manually triggered: Power BI Desktop refresh. Future production enhancements: managed orchestration, secret vault integration, monitoring/alerting, and a tested supported Power BI service refresh.
+Implemented automatically: source SHA-256 change detection, ingestion, profiling, cleaning, validation, Gold transformation, Azure core synchronization, Azure Gold synchronization, failure propagation, timestamped logs, successful-source state tracking, incremental/idempotent Azure upserts, local-vs-Azure reconciliation, and Windows Task Scheduler execution every 30 minutes. Manually triggered: Power BI Desktop Refresh. Future production enhancements: managed orchestration, secret vault integration, monitoring/alerting, and a tested supported Power BI service refresh.
 
 Use migration preflight modes before any Azure data copy:
 
@@ -319,15 +321,15 @@ The current Python/Pandas implementation is appropriate for the assessment datas
 ## Known Limitations
 
 1. Scheduled-versus-actual timestamps are unavailable, so true delay minutes cannot be calculated.
-2. Duration-based anomaly detection remains planned.
+2. Duration-based anomaly detection is implemented; no duration anomalies were detected in the assessment dataset.
 3. Some authoritative airline, airport/IATA, and payment-method mappings were unavailable.
 4. `UNKNOWN` and NULL values are retained where safe resolution is not supported.
 5. Current Power BI reporting is based on Gold/reporting tables.
-6. Local development and Azure MySQL migration are implemented; ADF/Databricks orchestration is future work.
+6. Local pipeline execution, incremental Azure MySQL synchronization, and Windows scheduling are implemented; ADF/Databricks orchestration is future work.
 
 ## Future Enhancements
 
-- Duration anomaly detection and review reporting
+- Duration anomaly review workflow and operational alerting
 - True delay analysis when scheduled/actual timestamps become available
 - Azure Data Factory and Data Lake integration
 - Databricks/Spark processing for larger data volumes
@@ -350,7 +352,7 @@ The current Python/Pandas implementation is appropriate for the assessment datas
 | Average Flight Duration | `dim_flights[duration_minutes]` analysis | Complete |
 | Route-wise Traffic | Route-level Gold/Power BI analysis | Complete |
 | Distribution of Flights by Airline | Flight-level airline analysis | Complete |
-| Delays/Anomalies | Duration/quality analysis; true delay unavailable | Partial — anomaly enhancement pending |
+| Delays/Anomalies | Duration-based anomaly analysis implemented; true operational delay unavailable from source | Complete with source limitation |
 | Power BI dashboard | PBIP/PBIR dashboard with two pages | Complete |
 | Interactive slicers | Airline, date, route, and payment-category slicers | Complete |
 | KPI cards | Executive and operations KPI cards | Complete |
@@ -358,9 +360,9 @@ The current Python/Pandas implementation is appropriate for the assessment datas
 
 ## Current Project Status
 
-The local pipeline, MySQL schema, profiling, cleaning, validation, Gold/reporting layer, Azure MySQL migration utilities, and PBIP/PBIR dashboard definition are implemented and validated for the assessment dataset.
+The local pipeline is implemented and validated, including RAW, CLEAN, audit, quarantine, and GOLD layers. Azure MySQL synchronization is implemented and live-tested: incremental Azure core and Gold synchronization passed with local-versus-Azure count reconciliation, and governance synchronization is idempotent through deterministic logical keys/hashes rather than auto-increment surrogate IDs. Windows Task Scheduler automation is installed and tested. The Power BI PBIP/PBIR dashboard is implemented with two pages, interactive slicers, KPI cards, and the final duration-anomaly/data-quality insight section.
 
-The principal open analytical limitation is true operational delay measurement. The source does not provide scheduled-versus-actual timestamps, so the project intentionally reports validated flight duration and quality context instead of fabricated delay metrics.
+Full automated pipeline execution has been successfully tested, and the latest unchanged-source scheduler run correctly skipped reprocessing. The test suite passed with 20 tests. The final reporting layer contains 964 flights and 1,000 passengers, bookings, payment-summary rows, and fact-booking rows. The principal analytical limitation is true operational delay measurement: the source does not provide scheduled-versus-actual timestamps, so the project reports validated flight duration and statistical anomaly context instead of fabricated delay metrics. Power BI Desktop refresh remains manual. The scheduler trigger was tested separately from the successful full pipeline execution; this README does not claim that the specific full seven-stage run was produced by Task Scheduler.
 
 ## Submission Deliverables
 
@@ -371,4 +373,5 @@ The principal open analytical limitation is true operational delay measurement. 
 - Power BI `.pbix` and `.pbip` project files
 - PBIR report definition with executive and flight-operations pages
 - TMDL semantic model and existing DAX measures
+- Final Power BI dashboard screenshot
 - This README documenting architecture, implementation, validation, limitations, and future work
