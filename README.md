@@ -4,6 +4,17 @@ An end-to-end data engineering assessment for turning airline operational data i
 
 The project was developed locally with Python and MySQL, validated against the assessment edge cases, and deployed to Azure Database for MySQL Flexible Server.
 
+## 🚀 Implementation Highlights
+
+- End-to-end Python + MySQL data engineering pipeline
+- Azure Database for MySQL Flexible Server deployment
+- Incremental and idempotent Azure synchronization
+- Windows Task Scheduler automation with 30-minute execution interval
+- Data profiling, validation, audit logging, and quarantine handling
+- PII-aware Gold reporting layer
+- Interactive two-page Power BI dashboard
+- 20 automated tests passed
+
 ## Business Problem
 
 ASG Airlines receives flight, booking, passenger, and payment data from operational systems. The source workbook contains missing values, malformed identifiers, duplicate and conflicting records, invalid timestamps, formula-based duration values, and payment anomalies.
@@ -179,6 +190,16 @@ Azure Database for MySQL Flexible Server is deployed with the same validated arc
 
 The repository contains `powerbi/ASG-Airlines-Dashboard.pbip`, `powerbi/ASG-Airlines-Dashboard.pbix`, PBIR report definitions, and the TMDL semantic model.
 
+### Dashboard Preview
+
+#### Executive Operations Dashboard
+
+![ASG Airlines Executive Operations Dashboard](images/powerbi_executive_dashboard.png)
+
+#### Flight Operations Analysis
+
+![ASG Airlines Flight Operations Analysis](images/powerbi_flight_operations.png)
+
 The two report pages are:
 
 1. **ASG Airlines | Executive Operations Dashboard**: Total Bookings, Total Passengers, Total Revenue, Total Flights, Average Booking Value, booking and revenue trends, airline distribution, route analysis, booking status, payment category, passenger age groups, and interactive slicers.
@@ -206,6 +227,9 @@ ASG-Airlines-Data-Engineering/
 │   ├── run_pipeline.py
 │   └── generate_powerbi_dashboard.py
 ├── docs/
+│   └── images/
+│       ├── powerbi_executive_dashboard.png
+│       └── powerbi_flight_operations.png
 ├── azure/
 └── powerbi/
 ```
